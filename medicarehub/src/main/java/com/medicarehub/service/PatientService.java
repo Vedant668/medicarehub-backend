@@ -30,7 +30,7 @@ public class PatientService {
 	
 	
 	
-	public int login(Patient patient) {
+	public Patient login(Patient patient) {
 	    Optional<Patient> patientCheck = patientRepository.findByPhone(patient.getPhone());
 
 	    if (patientCheck.isEmpty()) {
@@ -38,7 +38,7 @@ public class PatientService {
 	    } else {
 	        Patient existingPatient = patientCheck.get();
 	        if (patient.getPassword().equals(existingPatient.getPassword()) && patient.getEmail().equals(existingPatient.getEmail())) {
-	            return existingPatient.getId();
+	            return existingPatient;
 	        }
 	    }
 

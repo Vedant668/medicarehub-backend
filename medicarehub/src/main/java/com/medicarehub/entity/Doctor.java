@@ -2,6 +2,8 @@ package com.medicarehub.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,18 +20,19 @@ public class Doctor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="doctor_id")
+	@Column(name="doctorId")
 	private int id;
 	private String name;
 	private String phone;
 	private String email;
 	private String gender;
-	private String password;
 	private String city;
+	private String password;
 	private String specialization;
 	private int fees;
 	
 	@OneToMany(mappedBy="doctor", fetch=FetchType.EAGER)
+	@JsonBackReference
 	public List<Appointment> appointments;
 	
 	public List<Appointment> getAppointments() {

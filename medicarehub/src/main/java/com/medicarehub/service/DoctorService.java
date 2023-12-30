@@ -1,5 +1,6 @@
 package com.medicarehub.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class DoctorService {
 	@Autowired
 	private DoctorRepository doctorRepository;
 	
-	public int login(Doctor doctor) {
+	public Doctor login(Doctor doctor) {
 	    Optional<Doctor> doctorCheck = doctorRepository.findByPhone(doctor.getPhone());
 
 	    if (doctorCheck.isEmpty()) {
@@ -24,10 +25,15 @@ public class DoctorService {
 	    } else {
 	        Doctor existingDoctor = doctorCheck.get();
 	        if (doctor.getPassword().equals(existingDoctor.getPassword()) && doctor.getEmail().equals(existingDoctor.getEmail())) {
-	            return existingDoctor.getId();
+	            return existingDoctor;
 	        }
 	    }
 
 	    throw new DoctorServiceException("Incorrect email or password");
+	}
+	
+	public List<Doctor> getAllDoctors(){
+		List <Doctor> doctors=doctorRepository.findAll();
+		return doctors;
 	}
 }

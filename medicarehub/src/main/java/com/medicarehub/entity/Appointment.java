@@ -3,6 +3,8 @@ package com.medicarehub.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,21 +20,32 @@ public class Appointment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="appoint_id")
+	@Column(name="appointId")
 	private int id;
 	
 	private LocalDate appdate;
-	private LocalTime apptime;
+	private String apptime;
 	private String symptoms;
+	private int height;
 	private int weight;
-	private String doctorName;
 	
+	
+	public String getApptime() {
+		return apptime;
+	}
+
+	public void setApptime(String apptime) {
+		this.apptime = apptime;
+	}
+
 	@ManyToOne
-	@JoinColumn(name="doctor_id")
+	@JoinColumn(name="doctorId")
+	
 	private Doctor doctor;
 	
 	@ManyToOne
-	@JoinColumn(name="patient_id")
+	@JoinColumn(name="patientId")
+	
 	private Patient patient;
 
 	public int getId() {
@@ -51,12 +64,13 @@ public class Appointment {
 		this.appdate = appdate;
 	}
 
-	public LocalTime getApptime() {
-		return apptime;
+	
+	public int getHeight() {
+		return height;
 	}
 
-	public void setApptime(LocalTime apptime) {
-		this.apptime = apptime;
+	public void setHeight(int height) {
+		this.height = height;
 	}
 
 	public String getSymptoms() {
@@ -73,14 +87,6 @@ public class Appointment {
 
 	public void setWeight(int weight) {
 		this.weight = weight;
-	}
-
-	public String getDoctorName() {
-		return doctorName;
-	}
-
-	public void setDoctorName(String doctorName) {
-		this.doctorName = doctorName;
 	}
 
 	public Doctor getDoctor() {

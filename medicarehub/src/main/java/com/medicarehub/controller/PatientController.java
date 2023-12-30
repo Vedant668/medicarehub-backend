@@ -41,13 +41,20 @@ public class PatientController {
 	@PostMapping("/patientLogin")
 	public LoginStatus login(@RequestBody Patient patient) {
 		try {
-			int id = patientService.login(patient);
+			Patient pt = patientService.login(patient);
 			
 			LoginStatus status = new LoginStatus();
+			status.setLoginId(pt.getId());
+			status.setLoginName(pt.getName());
+			status.setLoginPhone(pt.getPhone());
+			status.setLoginEmail(pt.getEmail());
+			status.setLoginGender(pt.getGender());
+			status.setLoginCity(pt.getCity());
 			status.setLoginStatus(true);
-			status.setLoginStatusMessage("Patient Login Successfully!");
-			status.setPatientId(id);
+			status.setLoginStatusMessage("Login Successfully!");
+			
 			return status;
+			
 		}
 		catch (PatientServiceException e) {
 			LoginStatus  status = new LoginStatus ();
