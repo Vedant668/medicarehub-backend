@@ -1,12 +1,17 @@
 package com.medicarehub.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.medicarehub.entity.Appointment;
 import com.medicarehub.entity.Patient;
+import com.medicarehub.exception.AppointmentServiceException;
 import com.medicarehub.exception.PatientServiceException;
+import com.medicarehub.repository.AppointmentRepository;
 import com.medicarehub.repository.PatientRepository;
 
 @Service
@@ -14,6 +19,9 @@ public class PatientService {
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private AppointmentRepository appointmentRepository;
 	
 	public int register(Patient patient) {
 	
@@ -44,4 +52,47 @@ public class PatientService {
 
 	    throw new PatientServiceException("Incorrect email or password");
 	}
+	
+	
+	public List<Appointment> getAppointmentsByPatientId(int patientId) {
+        List<Appointment> list = appointmentRepository.getAppointmentsByPatientId(patientId);
+        if (list.isEmpty()) {
+            throw new AppointmentServiceException("No appointments found!!!: ");
+        } else {
+            return list;
+        }
+    }
+	
+	@Transactional
+    public Appointment updatePatientAppointment(int patientId, Appointment updateAppointment) {
+		
+        Optional<Appointment> patientAppointment = appointmentRepository.findByPatientIdAndAppointmentId(patientId, updateAppointment.getId());
+
+        if (patientAppointment.isPresent()) {
+            Appointment appointment = patientAppointment.get();
+        
+            appointment.setAppdate(updateAppointment.getAppdate());
+            appointment.setApptime(updateAppointment.getApptime());
+           appointment.setSymptoms(updateAppointment.getSymptoms());
+           appointment.setWeight(updateAppointment.getWeight());
+           appointment.setHeight(updateAppointment.getHeight());
+
+            return appointmentRepository.save(appointment);
+        } else {
+            
+            throw new AppointmentServiceException("Appointment not found with ID: ");
+        }
+    }
+	
+	@Transactional
+    public boolean deleteAppointmentByPatient(int appointmentId) {
+        try {
+            appointmentRepository.deleteById(appointmentId);
+            return true;
+        } catch (Exception e) {
+ 
+            return false;
+        }
+   }	
+	
 }

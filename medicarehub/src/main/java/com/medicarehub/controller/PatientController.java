@@ -1,14 +1,25 @@
 package com.medicarehub.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medicarehub.dto.BookingStatus;
 import com.medicarehub.dto.LoginStatus;
 import com.medicarehub.dto.RegistrationStatus;
+import com.medicarehub.entity.Appointment;
 import com.medicarehub.entity.Patient;
+import com.medicarehub.exception.AppointmentServiceException;
 import com.medicarehub.exception.PatientServiceException;
 import com.medicarehub.service.PatientService;
 
@@ -63,4 +74,36 @@ public class PatientController {
 			return status;
 		}
 	}
+	
+	@GetMapping("/getAppointmentsByPatientId/{patientId}")
+	public List<Appointment> fetchPatientAppointments(@PathVariable int patientId) {
+		try {
+            List<Appointment> appointments = patientService.getAppointmentsByPatientId(patientId);
+            return appointments;
+        } catch (AppointmentServiceException e) {
+        	
+            return null;
+        }
+    }
+	 @PutMapping("/updateByPatient/{patientId}")
+	   public BookingStatus updateAppointment(@PathVariable int patientId, @RequestBody Appointment updateAppointment) {
+
+		    Appointment appointmentStatus= patientService.updatePatientAppointment(patientId, updateAppointment);
+		    BookingStatus status=new BookingStatus();
+			status.setBookingId(appointmentStatus.getId());
+			status.setBookingStatus(true);
+			status.setBookingStatusMessage("Appointment updated Successfull!");
+			return status; 
+
+	   }
+	    @DeleteMapping("/deleteAppointmentByPatient/{patientId}")
+	    public BookingStatus deleteAppointment(@PathVariable int patientId) {
+	    	boolean appointmentStatus= patientService.deleteAppointmentByPatient(patientId);
+	        BookingStatus status=new BookingStatus();
+			//status.setBookingId(appointmentStatus.getId());
+			status.setBookingStatus(true);
+			status.setBookingStatusMessage("Appointment deleted Successfully!");
+			return status; 
+	    }
+	
 }
