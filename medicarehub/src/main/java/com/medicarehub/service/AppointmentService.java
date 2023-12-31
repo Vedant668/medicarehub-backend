@@ -58,33 +58,34 @@ public class AppointmentService {
     	return appointmentRepository.findAll();
     }
 
-//    @Transactional
-//    public Appointment updateAppointment(int appointmentId, Appointment updatedAppointment) {
-//        Optional<Appointment> optionalAppointment = appointmentRepository.findById(appointmentId);
-//
-//        if (optionalAppointment.isPresent()) {
-//            Appointment appointment = optionalAppointment.get();
+    @Transactional
+    public Appointment updateAppointment(int doctorId, Appointment updatedAppointment) {
+        Optional<Appointment> patientAppointment = appointmentRepository.findByDoctorIdAndAppointmentId(doctorId,updatedAppointment.getId());
+
+        if (patientAppointment.isPresent()) {
+            Appointment appointment = patientAppointment.get();
 //        
-//            appointment.setAppdate(updatedAppointment.getAppdate());
-//            appointment.setApptime(updatedAppointment.getApptime());
-//            appointment.setSymptoms(updatedAppointment.getSymptoms());
-//            appointment.setWeight(updatedAppointment.getWeight());
-//
-//            return appointmentRepository.save(appointment);
-//        } else {
-//            
-//            throw new AppointmentNotFoundException("Appointment not found with ID: " + appointmentId);
-//        }
-//    }
-//
-//    @Transactional
-//    public boolean deleteAppointment(int appointmentId) {
-//        try {
-//            appointmentRepository.deleteById(appointmentId);
-//            return true;
-//        } catch (Exception e) {
-// 
-//            return false;
-//        }
-//    }
+            appointment.setAppdate(updatedAppointment.getAppdate());
+            appointment.setApptime(updatedAppointment.getApptime());
+            appointment.setSymptoms(updatedAppointment.getSymptoms());
+            appointment.setWeight(updatedAppointment.getWeight());
+            appointment.setHeight(updatedAppointment.getHeight());
+
+            return appointmentRepository.save(appointment);
+        } else {
+            
+            throw new AppointmentServiceException("Appointment not found ");
+        }
+    }
+
+    @Transactional
+    public boolean deleteAppointmentByDoctor(int appointmentId) {
+        try {
+            appointmentRepository.deleteById(appointmentId);
+            return true;
+        } catch (Exception e) {
+ 
+            return false;
+        }
+   }
 }

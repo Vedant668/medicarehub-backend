@@ -1,4 +1,3 @@
-
 package com.medicarehub.controller;
 
 import com.medicarehub.dto.BookingStatus;
@@ -48,22 +47,37 @@ public class AppointmentController {
             List<Appointment> appointments = appointmentService.getAppointmentsByDoctorId(doctorId);
             return ResponseEntity.ok(appointments);
         } catch (AppointmentServiceException e) {
+        	
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
     
-    @GetMapping("/findAll")
+    @GetMapping("/fetchAllApointments")
     public List<Appointment> fetchAll(){
     	return appointmentService.fetchAll();
     }
 
-//    @PutMapping("/update/{appointmentId}")
-//    public void updateAppointment(@PathVariable int appointmentId, @RequestBody Appointment updatedAppointment) {
-//        appointmentService.updateAppointment(appointmentId, updatedAppointment);
-//    }
+   @PutMapping("/updateByDoctor/{doctorId}")
+   public BookingStatus updateAppointment(@PathVariable int doctorId, @RequestBody Appointment updatedAppointment) {
 
-//    @DeleteMapping("/delete/{appointmentId}")
-//    public void deleteAppointment(@PathVariable int appointmentId) {
-//        appointmentService.deleteAppointment(appointmentId);
-//    }
+	    Appointment appointmentStatus= appointmentService.updateAppointment(doctorId, updatedAppointment);
+	    BookingStatus status=new BookingStatus();
+		status.setBookingId(appointmentStatus.getId());
+		status.setBookingStatus(true);
+		status.setBookingStatusMessage("Appointment updated Successfull!");
+		return status; 
+
+   }
+    @DeleteMapping("/rejectAppointmentByDoctor/{appointmentId}")
+    public BookingStatus rejectAppointmentByDoctor(@PathVariable int appointmentId) {
+    	boolean appointmentStatus= appointmentService.deleteAppointmentByDoctor(appointmentId);
+        BookingStatus status=new BookingStatus();
+		//status.setBookingId(appointmentStatus.getId());
+		status.setBookingStatus(true);
+		status.setBookingStatusMessage("Appointment deleted Successfully!");
+		return status; 
+    }
+    
+   
+    
 }
