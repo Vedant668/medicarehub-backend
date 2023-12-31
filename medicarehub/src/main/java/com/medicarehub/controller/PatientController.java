@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.medicarehub.dto.BookingStatus;
 import com.medicarehub.dto.LoginStatus;
+import com.medicarehub.dto.PatientUpdateStatus;
 import com.medicarehub.dto.RegistrationStatus;
 import com.medicarehub.entity.Appointment;
 import com.medicarehub.entity.Patient;
@@ -104,6 +105,30 @@ public class PatientController {
 			status.setBookingStatus(true);
 			status.setBookingStatusMessage("Appointment deleted Successfully!");
 			return status; 
+	    }
+	    
+	    @PutMapping("/updateByPatient")
+		public PatientUpdateStatus updateByPatient(@RequestBody Patient patient) {
+			
+				Patient patientupdated = patientService.updatePatient(patient);
+				
+				PatientUpdateStatus status = new PatientUpdateStatus();
+				status.setUpdateStatus(true);
+				status.setUpdateStatusMessage("Patient updated successfully!");
+				status.setPatientId(patientupdated.getId());
+				return status;
+			
+		}
+	    
+	    @GetMapping("/fetchPatientById/{patientId}")
+		public Patient fetchPatient(@PathVariable int patientId) {
+			try {
+	            Patient patient = patientService.fetchByPatientId(patientId);
+	            return patient;
+	        } catch (PatientServiceException e ) {
+	        	
+	            return null;
+	        }
 	    }
 	
 }

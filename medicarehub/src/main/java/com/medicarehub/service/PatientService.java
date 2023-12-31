@@ -95,4 +95,35 @@ public class PatientService {
         }
    }	
 	
+	@Transactional
+    public Patient updatePatient(Patient updatePatient) {
+		
+        Optional<Patient> patientdata = patientRepository.findById(updatePatient.getId());
+
+        if (patientdata.isPresent()) {
+            Patient patient = patientdata.get();
+        
+            patient.setName(updatePatient.getName());
+            patient.setPhone(updatePatient.getPhone());
+            patient.setEmail(updatePatient.getEmail());
+            patient.setGender(updatePatient.getGender());
+            patient.setCity(updatePatient.getCity());
+            patient.setDateOfBirth(updatePatient.getDateOfBirth());
+            patient.setPassword(updatePatient.getPassword());
+
+            return patientRepository.save(patient);
+        } else {
+            
+            throw new PatientServiceException("patient not found");
+        }
+   }
+	public Patient fetchByPatientId(int patientId) {
+		Optional<Patient> patient = patientRepository.findById(patientId);
+        if ( patient.isEmpty()) {
+            throw new PatientServiceException("No patients found!!!: ");
+        } else {
+            return patient.get() ;
+        }
+    }
+	
 }
