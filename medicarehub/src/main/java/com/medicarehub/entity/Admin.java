@@ -5,24 +5,26 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table
-public class Patient {
-	
+public class Admin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="patientId")
+	@Column(name = "adminId")
 	private int id;
 	private String name;
 	private String phone;
@@ -31,25 +33,6 @@ public class Patient {
 	private String city;
 	private LocalDate dateOfBirth;
 	private String password;
-	
-	
-	@OneToMany(mappedBy="patient", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
-	@JsonBackReference
-	public List<Appointment> appointments;
-	
-	public List<Appointment> getAppointments() {
-		return appointments;
-	}
-	public void setAppointments(List<Appointment> appointments) {
-		this.appointments = appointments;
-	}
-	public LocalDate getDateOfBirth() {
-		return dateOfBirth;
-	}
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-	
 	public int getId() {
 		return id;
 	}
@@ -80,17 +63,25 @@ public class Patient {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	public String getCity() {
 		return city;
 	}
 	public void setCity(String city) {
 		this.city = city;
 	}
-		
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	
+	
 }

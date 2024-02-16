@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.medicarehub.entity.Patient;
 
-
+//patient object and primary key datatype
 public interface PatientRepository extends JpaRepository<Patient, Integer>{
 	
 	public Optional<Patient> findByPhone(String phone);

@@ -41,6 +41,7 @@ public class PatientController {
 			status.setStatus(true);
 			status.setStatusMessage("Patient Registered Successfully!");
 			status.setPatientId(id);
+			
 			return status;
 		}
 		catch (PatientServiceException e) {

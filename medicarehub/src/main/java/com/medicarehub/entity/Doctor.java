@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,8 +32,8 @@ public class Doctor {
 	private String specialization;
 	private int fees;
 	
-	@OneToMany(mappedBy="doctor", fetch=FetchType.EAGER)
-	@JsonBackReference
+	@OneToMany(mappedBy="doctor", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@JsonBackReference		
 	public List<Appointment> appointments;
 	
 	public List<Appointment> getAppointments() {

@@ -30,6 +30,7 @@ public class AppointmentController {
     		
     		return status;
     	}
+    	
     	catch(AppointmentServiceException e){
     		BookingStatus status=new BookingStatus();
     		status.setBookingStatus(false);
