@@ -28,8 +28,16 @@ public class Appointment {
 	private String symptoms;
 	private int height;
 	private int weight;
+	private String prescription;
 	
-	
+	public String getPrescription() {
+		return prescription;
+	}
+
+	public void setPrescription(String prescription) {
+		this.prescription = prescription;
+	}
+
 	public String getApptime() {
 		return apptime;
 	}

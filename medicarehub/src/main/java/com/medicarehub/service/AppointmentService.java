@@ -73,6 +73,7 @@ public class AppointmentService {
             appointment.setSymptoms(updatedAppointment.getSymptoms());
             appointment.setWeight(updatedAppointment.getWeight());
             appointment.setHeight(updatedAppointment.getHeight());
+            appointment.setPrescription(updatedAppointment.getPrescription());
 
             return appointmentRepository.save(appointment);
         } else {
@@ -123,4 +124,16 @@ public class AppointmentService {
         }
     }
 
+    
+    
+    public List<Appointment> getMedicalHistoryByPatientId(int patientId) {
+		List<Appointment> list = appointmentRepository.getAppointmentsByPatientId(patientId);
+        if ( list.isEmpty()) {
+            throw new AppointmentServiceException("No patient Medical History found!!!: ");
+        } else {
+            return list;
+        }
+    }
+    
+    
 }
