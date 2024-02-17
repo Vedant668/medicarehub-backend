@@ -1,5 +1,6 @@
 package com.medicarehub.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medicarehub.dto.LoginStatus;
+import com.medicarehub.entity.Appointment;
 import com.medicarehub.entity.Doctor;
 import com.medicarehub.exception.PatientServiceException;
 import com.medicarehub.exception.DoctorServiceException;
+import com.medicarehub.service.AppointmentService;
 import com.medicarehub.service.DoctorService;
 
 @RestController
@@ -21,6 +24,9 @@ public class DoctorController {
 	
 	@Autowired
 	public DoctorService doctorService;
+	
+	@Autowired
+	public AppointmentService appointmnrtService;
 	
 	@PostMapping("/doctorLogin")
 	public LoginStatus login(@RequestBody Doctor doctor) {
@@ -53,6 +59,20 @@ public class DoctorController {
 		try {
 		List <Doctor> doctors=doctorService.getAllDoctors();
 		return doctors;
+	}
+	catch(DoctorServiceException e) {
+		return null;
+	}
+		
+	}
+	
+	
+	@PostMapping("/getTimeSlot")
+	public List <String> getTimeSlot(@RequestBody Appointment appointment) {
+		try {
+		List <String> timeSlot = appointmnrtService.getTimeSlotByDoctorAndDate(appointment);
+		
+		return timeSlot;
 	}
 	catch(DoctorServiceException e) {
 		return null;
