@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +12,10 @@ import com.medicarehub.entity.Admin;
 import com.medicarehub.entity.Appointment;
 import com.medicarehub.entity.Doctor;
 import com.medicarehub.entity.Patient;
+import com.medicarehub.exception.AdminServiceException;
 import com.medicarehub.exception.AppointmentServiceException;
 import com.medicarehub.exception.DoctorServiceException;
+import com.medicarehub.exception.PatientServiceException;
 import com.medicarehub.repository.AdminRepository;
 import com.medicarehub.repository.DoctorRepository;
 import com.medicarehub.repository.PatientRepository;
@@ -29,19 +32,39 @@ public class AdminService {
 	@Autowired
 	public PatientRepository patientRepository;
 	
+	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	
+public int register(Admin admin) {
+		
+		Optional<Admin> adminCheck = adminRepository.findByEmail(admin.getEmail());
+		
+		if(adminCheck.isEmpty()) {
+			String password = admin.getPassword();
+			String encodedPassword = passwordEncoder.encode(password);
+			admin.setPassword(encodedPassword);
+
+			Admin savedAdmin = adminRepository.save(admin);
+			return savedAdmin.getId();
+		}
+		else {
+			throw new PatientServiceException("Patient already registered !");
+		}
+	}
+
+	
 	public Admin login(Admin admin) {
-	    Optional<Admin> adminCheck = adminRepository.findByPhone(admin.getPhone());
+	    Optional<Admin> adminCheck = adminRepository.findByEmail(admin.getEmail());
 
 	    if (adminCheck.isEmpty()) {
-	        throw new DoctorServiceException("Doctor doesn't exist");
+	        throw new AdminServiceException("Admin doesn't exist");
 	    } else {
 	        Admin existingAdmin = adminCheck.get();
-	        if (admin.getPassword().equals(existingAdmin.getPassword()) && admin.getEmail().equals(existingAdmin.getEmail())) {
+	        if((passwordEncoder.matches(admin.getPassword(), existingAdmin.getPassword())) && (admin.getEmail().equals(existingAdmin.getEmail()))) {
 	            return existingAdmin;
 	        }
 	    }
 
-	    throw new DoctorServiceException("Incorrect email or password");
+	    throw new AdminServiceException("Incorrect email or password");
 	}
 	
 	

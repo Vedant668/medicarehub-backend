@@ -1,8 +1,12 @@
 package com.medicarehub.controller;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,12 +28,32 @@ import com.medicarehub.exception.AppointmentServiceException;
 import com.medicarehub.exception.PatientServiceException;
 import com.medicarehub.service.PatientService;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @RestController
 @CrossOrigin
 public class PatientController {
 
 	@Autowired
 	private PatientService patientService;
+	
+	@Value("${JWTSecret}")
+	private String jwtSecret;
+	
+	@Value("${JWTExpiration}")
+	private long jwtExpiration;
+
+	public String generateJwtToken(Patient patient) {
+        Map<String, Object> claims = new HashMap<>();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(patient.getPhone())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
 	
 	@PostMapping("/register")
 	public RegistrationStatus register(@RequestBody Patient patient) {
@@ -55,6 +79,7 @@ public class PatientController {
 	public LoginStatus login(@RequestBody Patient patient) {
 		try {
 			Patient pt = patientService.login(patient);
+			String token = generateJwtToken(patient);
 			
 			LoginStatus status = new LoginStatus();
 			status.setLoginId(pt.getId());
@@ -64,7 +89,9 @@ public class PatientController {
 			status.setLoginGender(pt.getGender());
 			status.setLoginCity(pt.getCity());
 			status.setLoginStatus(true);
+			status.setToken(token);
 			status.setLoginStatusMessage("Login Successfully!");
+			System.out.println("ttoken to be genertated  "+token);
 			
 			return status;
 			

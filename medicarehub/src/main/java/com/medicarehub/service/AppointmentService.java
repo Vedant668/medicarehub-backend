@@ -115,8 +115,7 @@ public class AppointmentService {
             addIfMissing(existingTimeSlots, "1:00 PM", timeToSend);
 
             return timeToSend;
-        }
-    }
+        }}
 
     private void addIfMissing(List<String> existingTimeSlots, String timeSlot, List<String> timeToSend) {
         if (!existingTimeSlots.contains(timeSlot)) {

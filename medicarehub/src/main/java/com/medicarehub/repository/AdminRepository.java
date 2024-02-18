@@ -13,7 +13,9 @@ import com.medicarehub.entity.Doctor;
 import com.medicarehub.entity.Patient;
 
 public interface AdminRepository extends JpaRepository<Admin, Integer>{
-	public Optional<Admin> findByPhone(String phone);
+	//public Optional<Admin> findByPhone(String phone);
+	
+	public Optional<Admin> findByEmail(String email);
 	
 	@Query("SELECT a FROM Patient a ")
 	 List<Patient> getAllPatients();
