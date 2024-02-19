@@ -24,8 +24,9 @@ import org.springframework.http.HttpStatus;*/
 
 
 import java.util.List;
+import java.util.Map;
 
-
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itextpdf.text.Document;
@@ -46,6 +48,9 @@ import com.medicarehub.dto.BookingStatus;
 import com.medicarehub.entity.Appointment;
 import com.medicarehub.exception.AppointmentServiceException;
 import com.medicarehub.service.AppointmentService;
+import com.razorpay.*;
+import com.razorpay.RazorpayException;
+
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -164,5 +169,24 @@ public class AppointmentController {
             e.printStackTrace();
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
+    }
+    
+    @PostMapping("/paymentGateway")
+    @ResponseBody
+    public String createOrder(@RequestBody Map<String, Object> data) throws RazorpayException {
+        System.out.println(data);
+
+        int amount = Integer.parseInt(data.get("fees").toString());
+
+        RazorpayClient client = new RazorpayClient("rzp_test_HhgkYLDKc9OTjS", "d64JmG8AgZMgOEI2jZow1Ykd");
+
+        JSONObject options = new JSONObject();
+        options.put("amount", amount * 100); // Amount should be provided instead of fees
+        options.put("currency", "INR");
+        options.put("receipt", "txn_123456");
+        
+        Order order = client.Orders.create(options); // Use uppercase Orders instead of orders
+        System.out.println(order);
+        return order.toString();
     }
 }
