@@ -8,10 +8,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medicarehub.dto.LoginStatus;
@@ -24,6 +26,7 @@ import com.medicarehub.exception.DoctorServiceException;
 import com.medicarehub.service.AppointmentService;
 import com.medicarehub.service.DoctorService;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -37,10 +40,68 @@ public class DoctorController {
 	@Autowired
 	public AppointmentService appointmnrtService;
 	
+public static String jwtSecret= "19cb1666f0b2153fccc19824e3cf828ca65db3706cc5b83e2228165b627c742d766712b689438d0130b1c984f1ca38dd187e083a65b67de6ab41c54ba5b94c44" ;
+	
+	//----------------------------------- jwt autharization code-----------------------------------------------------------------------
+	
+			public static boolean verifyToken(String token) {
+		    	System.out.println("care here 3");
+		        try {
+		        	if(token.length()==0) {
+		        		return false;
+		        	}
+		        	System.out.println("jwt secret  "+ jwtSecret);
+		            Claims claims = Jwts.parserBuilder()
+		                    .setSigningKey(jwtSecret)
+		                    .build()
+		                    .parseClaimsJws(token)
+		                    .getBody();
+
+		            // Perform additional verification logic if needed
+		            System.out.println("claims "+ claims);
+		            System.out.println("token  "+ token);
+		            return true;
+		        } catch (Exception e) {
+		        	System.out.println("error   "+ e);
+		            return false;
+		        }
+		    }
+		    
+		    private String extractTokenFromHeader(String authorizationHeader) {
+		    	System.out.println("care here 2");
+		        // Check if the Authorization header is present and starts with "Bearer "
+		        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+		            // Extract and return the token part after removing the "Bearer " prefix
+		        	
+		            return authorizationHeader.substring(7);
+		        }
+
+		        // If the header is missing or doesn't have the expected format, return null or handle it as needed
+		        return null;
+		    }
+
+		    
+		   
+		    public boolean verifyJwtToken( String authorizationHeader)  {
+		        // Extract the token from the Authorization header
+		        String jwtToken = extractTokenFromHeader(authorizationHeader);
+		        System.out.println("care here 1");
+		        // Verify the token
+		        boolean isValidToken = verifyToken(jwtToken);
+
+		        if (!isValidToken) {
+		            // Handle unauthorized access, e.g., throw an exception or redirect to a login page
+		            return false;
+		        }
+
+		        return true;
+		    }
+	
+	
 	
 	//---------------------------jwt method-----------------------------------------
-	@Value("${JWTSecret}")
-	private String jwtSecret;
+//	@Value("${JWTSecret}")
+//	private String jwtSecret;
 	
 	@Value("${JWTExpiration}")
 	private long jwtExpiration;
@@ -107,10 +168,17 @@ public class DoctorController {
 	
 	
 	@GetMapping("/getAllDoctors")
-	public List <Doctor> getAllDoctors() {
+	public List <Doctor> getAllDoctors(@RequestHeader(name = "Authorization") String authorizationHeader) throws Exception {
 		try {
-		List <Doctor> doctors=doctorService.getAllDoctors();
-		return doctors;
+			//----------------------------------------------------------verification happens here--------------------------------------
+			boolean isValidToken = verifyJwtToken(authorizationHeader);
+		if(isValidToken) {//------------------------if true starts the process--------------------------------------
+			List <Doctor> doctors=doctorService.getAllDoctors();
+			return doctors;
+		}else {
+			throw new Exception("invalid token");
+		}
+		
 	}
 	catch(DoctorServiceException e) {
 		return null;
@@ -120,11 +188,18 @@ public class DoctorController {
 	
 	
 	@PostMapping("/getTimeSlot")
-	public List <String> getTimeSlot(@RequestBody Appointment appointment) {
+	public List <String> getTimeSlot(@RequestBody Appointment appointment,@RequestHeader(name = "Authorization") String authorizationHeader) throws Exception {
 		try {
-		List <String> timeSlot = appointmnrtService.getTimeSlotByDoctorAndDate(appointment);
+			//----------------------------------------------------------verification happens here--------------------------------------
+			boolean isValidToken = verifyJwtToken(authorizationHeader);
+		if(isValidToken) {//------------------------if true starts the process--------------------------------------
+			List <String> timeSlot = appointmnrtService.getTimeSlotByDoctorAndDate(appointment);
+			
+			return timeSlot;
+		}else {
+			throw new Exception("invalid token");
+		}
 		
-		return timeSlot;
 	}
 	catch(DoctorServiceException e) {
 		return null;
