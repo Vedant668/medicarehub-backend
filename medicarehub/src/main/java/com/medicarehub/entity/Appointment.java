@@ -13,22 +13,41 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table
 public class Appointment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="appointId")
-	private int id;
-	
-	private LocalDate appdate;
-	private String apptime;
-	private String symptoms;
-	private int height;
-	private int weight;
-	private String prescription;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "appointId")
+    private int id;
+
+    @NotNull
+    private LocalDate appdate;
+
+    @NotBlank
+    private String apptime;
+
+    @NotBlank
+    @Size(max = 255)
+    private String symptoms;
+
+    @Positive
+    private int height;
+
+    @Positive
+    private int weight;
+
+    @Size(max = 255)
+    private String prescription;
+
+    
 	
 	public String getPrescription() {
 		return prescription;

@@ -143,12 +143,10 @@ public class AdminController {
 		
 
 	@PostMapping("/adminLogin")
-	public LoginStatus login(@RequestBody Admin admin,@RequestHeader(name = "Authorization") String authorizationHeader) throws Exception {
+	public LoginStatus login(@RequestBody Admin admin) throws Exception {
 		try {
 			
-			//----------------------------------------------------------verification happens here--------------------------------------
-			boolean isValidToken = verifyJwtToken(authorizationHeader);
-		if(isValidToken) {//------------------------if true starts the process--------------------------------------
+			
 Admin ad = adminService.login(admin);
 			
 			LoginStatus status = new LoginStatus();
@@ -165,9 +163,7 @@ Admin ad = adminService.login(admin);
 			status.setLoginStatusMessage("Login Successfully!");
 			
 			return status;
-		}else {
-			throw new Exception("invalid token");
-		}
+		
 			
 		}
 		catch (AdminServiceException e) {

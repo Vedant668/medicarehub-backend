@@ -14,23 +14,44 @@ import jakarta.persistence.Id;
 
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table
 public class Doctor {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="doctorId")
-	private int id;
-	private String name;
-	private String phone;
-	private String email;
-	private String gender;
-	private String city;
-	private String password;
-	private String specialization;
-	private int fees;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "doctorId")
+    private int id;
+
+    @NotBlank
+    private String name;
+
+    @Pattern(regexp = "\\d{10}")
+    private String phone;
+
+    @NotBlank
+    @Email
+    private String email;
+
+    @NotBlank
+    private String gender;
+
+    @NotBlank
+    private String city;
+
+    @NotBlank
+    private String password;
+
+    @NotBlank
+    private String specialization;
+
+    @Positive
+    private int fees;
 	
 	@OneToMany(mappedBy="doctor", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JsonBackReference		

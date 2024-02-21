@@ -19,32 +19,40 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 @Valid
 @Entity
 @Table
 public class Patient {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="patientId")
-	private int id;
-	private String name;
-	
-	@Column(length=10,nullable = false)
-	@Pattern(regexp="(^[0-9]{10}$)",message = "Invalid Mobile Number !")
-	private String phone;
-	
-	@Column(length = 50,unique = true,nullable = false)
-	@Email(message = "Email should be Proper")
-	private String email;
-	private String gender;
-	private String city;
-	private LocalDate dateOfBirth;
-	
-	
-	@Column(name="password" ,length = 300, nullable = false)
-	private String password;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "patientId")
+    private int id;
+
+    @NotBlank
+    private String name;
+
+    @Column(length = 10, nullable = false)
+    @Pattern(regexp = "(^[0-9]{10}$)", message = "Invalid Mobile Number!")
+    private String phone;
+
+    @Email(message = "Email should be Proper")
+    @NotBlank
+    private String email;
+
+    private String gender;
+
+    @NotBlank
+    private String city;
+
+    private LocalDate dateOfBirth;
+
+    @Column(name = "password", length = 300, nullable = false)
+    @Size(min = 8, message = "Password should have at least 8 characters")
+    private String password;
 	
 	
 	@OneToMany(mappedBy="patient", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
